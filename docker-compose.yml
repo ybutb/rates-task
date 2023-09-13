@@ -1,0 +1,18 @@
+version: '3'
+
+services:
+  app:
+    build:
+      context: .
+      args:
+        - HOST_UID=${HOST_UID:-1000}
+        - HOST_GID=${HOST_GID:-1000}
+      dockerfile: Dockerfile
+    image: tictactoe
+    volumes:
+      - .:/var/www
+    extra_hosts:
+      - "host.docker.internal:host-gateway" # for Linux
+    working_dir: /var/www
+    tty: true
+    command: ["bash", "-c", "composer install && tail -f /dev/null"]
