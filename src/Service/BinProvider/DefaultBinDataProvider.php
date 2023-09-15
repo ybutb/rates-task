@@ -8,7 +8,7 @@ use RuntimeException;
 use Symfony\Contracts\HttpClient\Exception\ExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-final class DefaultBinProvider implements BinProviderInterface
+final class DefaultBinDataProvider implements BinDataProviderInterface
 {
     public function __construct(private readonly HttpClientInterface $binClient)
     {

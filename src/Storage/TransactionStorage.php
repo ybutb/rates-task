@@ -13,12 +13,12 @@ final class TransactionStorage implements TransactionStorageInterface
 
     public function __construct(
         private readonly FileHandler $fileHandler,
-        private readonly string $dataFolder,
+        private readonly string $dataFolder
     ) {
     }
 
     /**
-     * @return TransactionData[]
+     * @inheritDoc
      */
     public function getDataByDsn(string $dsn): array
     {

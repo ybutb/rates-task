@@ -16,7 +16,7 @@ final class DefaultRatesProvider implements RatesProviderInterface
     }
 
     /**
-     * @throws RuntimeException
+     * @inheritDoc
      */
     public function getRate(TransactionData $transactionData): float
     {

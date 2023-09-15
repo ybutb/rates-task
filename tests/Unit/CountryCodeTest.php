@@ -11,7 +11,7 @@ class CountryCodeTest extends TestCase
 {
     public function testSuccess(): void
     {
-        $this->assertTrue(CountryCode::isEu(CountryCode::DK->value));
+        $this->assertTrue(CountryCode::isEu('DK'));
         $this->assertFalse(CountryCode::isEu('randomValue'));
     }
 }

@@ -30,12 +30,14 @@ final class CommissionsCommand extends Command
         $inputFile = $input->getArgument('filename');
 
         try {
-            foreach ($this->conversionService->getTransactionCommissions($inputFile) as $commission) {
-                $output->writeln((string) $commission);
-            }
+            $commissions = $this->conversionService->getTransactionCommissions($inputFile);
         } catch (RuntimeException $e) {
             echo $e->getMessage();
             return self::FAILURE;
+        }
+
+        foreach ($commissions as $commission) {
+            $output->writeln((string) $commission);
         }
 
         return self::SUCCESS;

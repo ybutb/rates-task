@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Tests\Unit;
 
-use App\Service\BinProvider\DefaultBinProvider;
+use App\Service\BinProvider\DefaultBinDataProvider;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use Symfony\Component\HttpClient\MockHttpClient;
 use Symfony\Component\HttpClient\Response\JsonMockResponse;
 
-class DefaultBinProviderTest extends TestCase
+class DefaultBinDataProviderTest extends TestCase
 {
     public function testSuccess(): void
     {
@@ -44,7 +44,7 @@ class DefaultBinProviderTest extends TestCase
 
         $mockResponse = new JsonMockResponse($responseContentMock);
         $mockClient = new MockHttpClient($mockResponse);
-        $binProvider = new DefaultBinProvider($mockClient);
+        $binProvider = new DefaultBinDataProvider($mockClient);
 
         $result = $binProvider->getCountryCodeByBin('123456');
 
@@ -80,7 +80,7 @@ class DefaultBinProviderTest extends TestCase
 
         $mockResponse = new JsonMockResponse($responseContentMock);
         $mockClient = new MockHttpClient($mockResponse);
-        $binProvider = new DefaultBinProvider($mockClient);
+        $binProvider = new DefaultBinDataProvider($mockClient);
 
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Bin is not valid.');
@@ -91,7 +91,7 @@ class DefaultBinProviderTest extends TestCase
     public function testNoCountryCodeResponseError(): void
     {
         $mockClient = new MockHttpClient(new JsonMockResponse());
-        $binProvider = new DefaultBinProvider($mockClient);
+        $binProvider = new DefaultBinDataProvider($mockClient);
 
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('No card issuer country data.');
@@ -109,7 +109,7 @@ class DefaultBinProviderTest extends TestCase
             ]
         );
         $mockClient = new MockHttpClient($mockResponse);
-        $binProvider = new DefaultBinProvider($mockClient);
+        $binProvider = new DefaultBinDataProvider($mockClient);
 
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Bin provider API request failed. Error: HTTP 400 returned for');

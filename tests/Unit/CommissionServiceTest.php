@@ -6,7 +6,7 @@ namespace Tests\Unit;
 
 use App\Dto\TransactionData;
 use App\Enum\CountryCode;
-use App\Service\BinProvider\BinProviderInterface;
+use App\Service\BinProvider\BinDataProviderInterface;
 use App\Service\CommissionService;
 use App\Service\RatesProvider\RatesProviderInterface;
 use App\Storage\TransactionStorageInterface;
@@ -18,7 +18,7 @@ class CommissionServiceTest extends TestCase
     {
         $mockRate = 4.0;
         $mockAmount = 1000.00;
-        $mockedCountryCode = CountryCode::DK->value;
+        $mockedCountryCode = 'DK';
 
         $transactionData = new TransactionData(
             bin: '45717360',
@@ -58,7 +58,7 @@ class CommissionServiceTest extends TestCase
     {
         $mockRate = 0;
         $mockAmount = 1000.00;
-        $mockedCountryCode = CountryCode::DK->value;
+        $mockedCountryCode = 'DK';
 
         $transactionData = new TransactionData(
             bin: '45717360',
@@ -78,11 +78,11 @@ class CommissionServiceTest extends TestCase
     {
         $mockRate = 5.0;
         $mockAmount = 1000.00;
-        $mockedCountryCode = CountryCode::DE->value;
+        $mockedCountryCode = 'DE';
 
         $transactionData = new TransactionData(
             bin: '45717360',
-            currency: CommissionService::CURRENCY_EUR,
+            currency: 'EUR',
             amount: (string) $mockAmount,
         );
 
@@ -98,7 +98,7 @@ class CommissionServiceTest extends TestCase
     {
         $mockRate = 21.654;
         $mockAmount = 1000.00;
-        $mockedCountryCode = CountryCode::DK->value;
+        $mockedCountryCode = 'DK';
 
         $transactionData = new TransactionData(
             bin: '45717360',
@@ -116,7 +116,7 @@ class CommissionServiceTest extends TestCase
 
     private function getService(string $countryCode, TransactionData $transactionData, float $mockRate): CommissionService
     {
-        $binProviderMock = $this->createMock(BinProviderInterface::class);
+        $binProviderMock = $this->createMock(BinDataProviderInterface::class);
 
         $binProviderMock->expects($this->once())
             ->method('getCountryCodeByBin')

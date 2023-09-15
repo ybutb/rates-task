@@ -3,8 +3,8 @@
 declare(strict_types=1);
 
 use App\Command\CommissionsCommand;
-use App\Service\BinProvider\BinProviderInterface;
-use App\Service\BinProvider\DefaultBinProvider;
+use App\Service\BinProvider\BinDataProviderInterface;
+use App\Service\BinProvider\DefaultBinDataProvider;
 use App\Service\CommissionService;
 use App\Service\FileHandler;
 use App\Service\RatesProvider\DefaultRatesProvider;
@@ -19,7 +19,7 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 $containerBuilder = new ContainerBuilder();
 
 $containerBuilder->register(CommissionService::class, CommissionService::class)->setAutowired(true);
-$containerBuilder->register(BinProviderInterface::class, DefaultBinProvider::class)
+$containerBuilder->register(BinDataProviderInterface::class, DefaultBinDataProvider::class)
     ->setArguments([
         new Reference('bin_api_client')
     ]);

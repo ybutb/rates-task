@@ -6,22 +6,24 @@ namespace App\Service;
 
 use App\Dto\TransactionData;
 use App\Enum\CountryCode;
-use App\Service\BinProvider\BinProviderInterface;
+use App\Service\BinProvider\BinDataProviderInterface;
 use App\Service\RatesProvider\RatesProviderInterface;
 use App\Storage\TransactionStorageInterface;
 
 class CommissionService
 {
-    public const CURRENCY_EUR = 'EUR';
+    private const CURRENCY_EUR = 'EUR';
 
     public function __construct(
         private readonly TransactionStorageInterface $transactionStorage,
-        private readonly BinProviderInterface $binProvider,
+        private readonly BinDataProviderInterface $binProvider,
         private readonly RatesProviderInterface $ratesProvider
-    )
-    {
+    ) {
     }
 
+    /**
+     * @return float[]
+     */
     public function getTransactionCommissions(string $dsn): array
     {
         $accountsData = $this->transactionStorage->getDataByDsn($dsn);
