@@ -8,5 +8,5 @@ use App\Dto\TransactionData;
 
 interface RatesProviderInterface
 {
-    function getData(TransactionData $accountData): float;
+    function getRate(TransactionData $transactionData): float;
 }

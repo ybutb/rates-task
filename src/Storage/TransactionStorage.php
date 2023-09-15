@@ -4,15 +4,17 @@ declare(strict_types=1);
 
 namespace App\Storage;
 
+use App\Service\FileHandler;
 use RuntimeException;
-use SplFileObject;
 use App\Dto\TransactionData;
 
-class TransactionStorage
+final class TransactionStorage implements TransactionStorageInterface
 {
 
-    public function __construct(private readonly string $dataFolder)
-    {
+    public function __construct(
+        private readonly FileHandler $fileHandler,
+        private readonly string $dataFolder,
+    ) {
     }
 
     /**
@@ -22,20 +24,17 @@ class TransactionStorage
     {
         $pathToFile = $this->dataFolder . '/' . $dsn;
 
-        if (!file_exists($pathToFile)) {
+        if (!$this->fileHandler->exists($pathToFile)) {
             throw new RuntimeException('Input file does not exist.');
         }
 
-        $file = new SplFileObject($pathToFile);
         $result = [];
 
-        while (!$file->eof()) {
-            $filteredJson = str_replace("\n", '', $file->fgets());
+        foreach ($this->fileHandler->readByLine($pathToFile) as $row) {
+            $filteredJson = str_replace("\n", '', $row);
             $accountDecoded = json_decode($filteredJson, true);
 
-            if (!is_array($accountDecoded)) {
-                throw new RuntimeException('Wrong format data in the file.');
-            }
+            $this->validateData($accountDecoded);
 
             $result[] = new TransactionData(
                 $accountDecoded['bin'],
@@ -45,5 +44,15 @@ class TransactionStorage
         }
 
         return $result;
+    }
+
+    /**
+     * @throws RuntimeException If file contains invalid data
+     */
+    private function validateData($accountDataDecoded): void
+    {
+        if (!is_array($accountDataDecoded) || !isset($accountDataDecoded['bin'], $accountDataDecoded['currency'], $accountDataDecoded['amount'])) {
+            throw new RuntimeException('Wrong format data in the file.');
+        }
     }
 }

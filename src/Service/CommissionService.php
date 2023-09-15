@@ -8,16 +8,16 @@ use App\Dto\TransactionData;
 use App\Enum\CountryCode;
 use App\Service\BinProvider\BinProviderInterface;
 use App\Service\RatesProvider\RatesProviderInterface;
-use App\Storage\TransactionStorage;
+use App\Storage\TransactionStorageInterface;
 
 class CommissionService
 {
-    private const CURRENCY_EUR = 'EUR';
+    public const CURRENCY_EUR = 'EUR';
 
     public function __construct(
-        private readonly TransactionStorage $transactionStorage,
-        private readonly BinProviderInterface $binProviderClient,
-        private readonly RatesProviderInterface $ratesProviderClient
+        private readonly TransactionStorageInterface $transactionStorage,
+        private readonly BinProviderInterface $binProvider,
+        private readonly RatesProviderInterface $ratesProvider
     )
     {
     }
@@ -36,16 +36,21 @@ class CommissionService
 
     private function getCommission(TransactionData $accountData): float
     {
-        $cardCountryCode = $this->binProviderClient->getData($accountData->getBin());
-        $currentRate = $this->ratesProviderClient->getData($accountData);
+        $cardCountryCode = $this->binProvider->getCountryCodeByBin($accountData->getBin());
+        $currentRate = $this->ratesProvider->getRate($accountData);
         $amountFixed = $accountData->getAmount();
 
-        if ($accountData->getCurrency() !== self::CURRENCY_EUR || $currentRate > 0) {
-            $amountFixed = $amountFixed / $currentRate;
+        if ($accountData->getCurrency() !== self::CURRENCY_EUR) {
+            $amountFixed = $currentRate ? $amountFixed / $currentRate : $amountFixed;
         }
 
         $commissionRate = CountryCode::isEu($cardCountryCode) ? 0.01 : 0.02;
 
-        return ceil($amountFixed * $commissionRate);
+        return $this->roundCommission($amountFixed * $commissionRate);
+    }
+
+    private function roundCommission(float $commission): float
+    {
+        return round(ceil($commission * 100) / 100, 2);
     }
 }

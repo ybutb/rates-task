@@ -6,5 +6,5 @@ namespace App\Service\BinProvider;
 
 interface BinProviderInterface
 {
-    function getData(string $bin): string;
+    function getCountryCodeByBin(string $bin): string;
 }

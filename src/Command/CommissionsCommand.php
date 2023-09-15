@@ -12,8 +12,8 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-#[AsCommand(name: 'app:commission')]
-class CommissionsCommand extends Command
+#[AsCommand(name: 'app:commissions')]
+final class CommissionsCommand extends Command
 {
     public function __construct(private readonly CommissionService $conversionService)
     {
@@ -30,20 +30,14 @@ class CommissionsCommand extends Command
         $inputFile = $input->getArgument('filename');
 
         try {
-            $result = $this->conversionService->getTransactionCommissions($inputFile);
+            foreach ($this->conversionService->getTransactionCommissions($inputFile) as $commission) {
+                $output->writeln((string) $commission);
+            }
         } catch (RuntimeException $e) {
             echo $e->getMessage();
             return self::FAILURE;
         }
 
-        $this->printResult($result);
         return self::SUCCESS;
-    }
-
-    private function printResult(array $result): void
-    {
-        foreach ($result as $charge) {
-            echo $charge . PHP_EOL;
-        }
     }
 }

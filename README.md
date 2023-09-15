@@ -1,9 +1,17 @@
 1. To setup the project locally:
+
+Create .env.local config copying from .env config to set rates API token:
+
+RATES_API_TOKEN=YOUR_TOKEN
+
 ````
-docker build -t rates_task_image .
+docker-compose build
 docker-compose up -d
-docker-compose exec php-cli sh
-composer install
+docker-compose exec app sh
 ````
 
-2. Define rate_api_key parameter in config/services.yaml as api.exchangeratesapi.io requests auth now.
+2. To run the tests after step 1:
+
+````
+docker-compose exec app /vendor/bin/phpunit
+````
