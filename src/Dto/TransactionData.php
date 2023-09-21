@@ -13,25 +13,16 @@ class TransactionData
     ) {
     }
 
-    /**
-     * @return string
-     */
     public function getBin(): string
     {
         return $this->bin;
     }
 
-    /**
-     * @return string
-     */
     public function getCurrency(): string
     {
         return $this->currency;
     }
 
-    /**
-     * @return string
-     */
     public function getAmount(): string
     {
         return $this->amount;

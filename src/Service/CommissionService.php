@@ -9,6 +9,9 @@ use App\Enum\CountryCode;
 use App\Service\BinProvider\BinDataProviderInterface;
 use App\Service\RatesProvider\RatesProviderInterface;
 use App\Storage\TransactionStorageInterface;
+use Brick\Math\RoundingMode;
+use Brick\Money\Context\DefaultContext;
+use Brick\Money\RationalMoney;
 
 class CommissionService
 {
@@ -39,20 +42,25 @@ class CommissionService
     private function getCommission(TransactionData $accountData): float
     {
         $cardCountryCode = $this->binProvider->getCountryCodeByBin($accountData->getBin());
-        $currentRate = $this->ratesProvider->getRate($accountData);
-        $amountFixed = $accountData->getAmount();
+        $currencyRate = $this->ratesProvider->getRate($accountData);
 
-        if ($accountData->getCurrency() !== self::CURRENCY_EUR) {
-            $amountFixed = $currentRate ? $amountFixed / $currentRate : $amountFixed;
+        $commission = RationalMoney::of($accountData->getAmount(), self::CURRENCY_EUR);
+
+        if ($currencyRate && $accountData->getCurrency() !== self::CURRENCY_EUR) {
+            $commission = $commission->dividedBy($currencyRate);
         }
 
         $commissionRate = CountryCode::isEu($cardCountryCode) ? 0.01 : 0.02;
+        $commission = $commission->multipliedBy($commissionRate);
 
-        return $this->roundCommission($amountFixed * $commissionRate);
+        return $this->formatToCents($commission);
     }
 
-    private function roundCommission(float $commission): float
+    private function formatToCents(RationalMoney $commission): float
     {
-        return round(ceil($commission * 100) / 100, 2);
+        return $commission->to(new DefaultContext(), RoundingMode::CEILING)
+            ->getAmount()
+            ->toScale(2)
+            ->toFloat();
     }
 }

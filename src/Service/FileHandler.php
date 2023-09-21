@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use LogicException;
+use RuntimeException;
 use SplFileObject;
 
 class FileHandler
@@ -12,6 +14,11 @@ class FileHandler
     {
         return file_exists($path);
     }
+
+    /**
+     * @throws RuntimeException Failed to open file.
+     * @throws LogicException When the path leads to directory.
+     */
     public function readByLine(string $path): iterable
     {
         $file = new SplFileObject($path);

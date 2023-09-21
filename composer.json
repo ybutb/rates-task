@@ -7,6 +7,7 @@
         "php": ">=8.2",
         "ext-ctype": "*",
         "ext-iconv": "*",
+        "brick/money": "^0.8.0",
         "symfony/config": "6.3.*",
         "symfony/console": "6.3.*",
         "symfony/dependency-injection": "6.3.*",

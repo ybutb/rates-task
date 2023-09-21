@@ -94,24 +94,34 @@ class CommissionServiceTest extends TestCase
         $this->assertEquals([$expectedCommission], $result);
     }
 
-    public function testCommissionByCentsCeiling(): void
+    /**
+     * @dataProvider ceilingTestDataProvider
+     */
+    public function testCommissionByCentsCeiling(float $mockRate, float $expectedCommissionWithCeiling): void
     {
-        $mockRate = 21.654;
-        $mockAmount = 1000.00;
+        $mockAmount = '1000.00';
         $mockedCountryCode = 'DK';
 
         $transactionData = new TransactionData(
             bin: '45717360',
             currency: 'DKK',
-            amount: (string) $mockAmount,
+            amount: $mockAmount,
         );
 
         $commissionService = $this->getService($mockedCountryCode, $transactionData, $mockRate);
-        $expectedCommissionWithCeiling = 0.47; // instead of 0.4618...
 
         $result = $commissionService->getTransactionCommissions('input.txt');
 
         $this->assertEquals([$expectedCommissionWithCeiling], $result);
+    }
+
+    public static function ceilingTestDataProvider(): array
+    {
+        return [
+            [21.654, 0.47],
+            [100, 0.1],
+            [0.8, 12.5],
+        ];
     }
 
     private function getService(string $countryCode, TransactionData $transactionData, float $mockRate): CommissionService

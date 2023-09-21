@@ -14,5 +14,5 @@ php app.php input.txt
 2. To run the tests after step 1:
 
 ````
-docker-compose exec app /vendor/bin/phpunit
+docker-compose exec app vendor/bin/phpunit
 ````
